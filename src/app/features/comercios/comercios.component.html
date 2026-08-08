@@ -1,2 +1,178 @@
-<h1>Comercios</h1>
-<p class="pendiente">El listado con búsqueda, filtros, orden y paginación se implementa en el próximo bloque.</p>
+<section class="tarjeta panel">
+
+  <header class="encabezado">
+    <h1>Comercios</h1>
+    <button type="button" class="boton" (click)="nuevo()">
+      <app-icon nombre="mas" [tamano]="16" />
+      Nuevo comercio
+    </button>
+  </header>
+
+  <div class="filtros">
+    <div class="buscador">
+      <app-icon nombre="buscar" [tamano]="16" />
+      <input type="search" [formControl]="busqueda" placeholder="Buscar por nombre, contacto, cuit…" />
+    </div>
+
+    <select [value]="filtro().estado ?? ''" (change)="filtrarPorEstado($any($event.target).value)">
+      <option value="">Estado: Todos</option>
+      @for (estado of estados(); track estado.id) {
+        <option [value]="estado.codigo">{{ estado.nombre }}</option>
+      }
+    </select>
+
+    <select [value]="filtro().rubroId ?? ''" (change)="filtrarPorRubro($any($event.target).value)">
+      <option value="">Rubro: Todos</option>
+      @for (rubro of rubros(); track rubro.id) {
+        <option [value]="rubro.id">{{ rubro.nombre }}</option>
+      }
+    </select>
+
+    <button type="button" class="boton boton-secundario" [disabled]="!hayFiltros()" (click)="limpiar()">
+      Limpiar
+    </button>
+  </div>
+
+  @if (error(); as mensaje) {
+    <div class="estado-vacio">
+      <p>{{ mensaje }}</p>
+      <button type="button" class="boton boton-secundario" (click)="cargar()">Reintentar</button>
+    </div>
+  } @else {
+    <div class="tabla-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>
+              <button type="button" class="orden" (click)="ordenarPor('nombre')">
+                Nombre comercial
+                @if (columnaOrden() === 'nombre') {
+                  <app-icon nombre="orden" [tamano]="14" [class.descendente]="descendente()" />
+                }
+              </button>
+            </th>
+            <th>
+              <button type="button" class="orden" (click)="ordenarPor('contacto')">
+                Contacto
+                @if (columnaOrden() === 'contacto') {
+                  <app-icon nombre="orden" [tamano]="14" [class.descendente]="descendente()" />
+                }
+              </button>
+            </th>
+            <th>
+              <button type="button" class="orden" (click)="ordenarPor('rubro')">
+                Rubro
+                @if (columnaOrden() === 'rubro') {
+                  <app-icon nombre="orden" [tamano]="14" [class.descendente]="descendente()" />
+                }
+              </button>
+            </th>
+            <th>
+              <button type="button" class="orden" (click)="ordenarPor('estado')">
+                Estado
+                @if (columnaOrden() === 'estado') {
+                  <app-icon nombre="orden" [tamano]="14" [class.descendente]="descendente()" />
+                }
+              </button>
+            </th>
+            <th>
+              <button type="button" class="orden" (click)="ordenarPor('fecha')">
+                Creado el
+                @if (columnaOrden() === 'fecha') {
+                  <app-icon nombre="orden" [tamano]="14" [class.descendente]="descendente()" />
+                }
+              </button>
+            </th>
+            <th class="acciones">Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody [class.atenuado]="cargando()">
+          @for (comercio of resultado()?.items ?? []; track comercio.id) {
+            <tr>
+              <td class="nombre">
+                <a [routerLink]="['/comercios', comercio.id]">{{ comercio.nombreComercial }}</a>
+              </td>
+              <td>{{ comercio.nombreContacto }}</td>
+              <td>{{ comercio.rubro }}</td>
+              <td>
+                <app-estado-badge [estado]="comercio.estado" [nombre]="comercio.estadoNombre" />
+              </td>
+              <td class="fecha">{{ comercio.fechaCreacion | date:'dd/MM/yyyy' }}</td>
+              <td class="acciones">
+                <a class="accion" [routerLink]="['/comercios', comercio.id]" title="Ver detalle">
+                  <app-icon nombre="ojo" />
+                </a>
+                <button type="button" class="accion" title="Editar" (click)="editar(comercio)">
+                  <app-icon nombre="lapiz" />
+                </button>
+                @if (auth.esAdmin()) {
+                  <button type="button" class="accion peligro" title="Eliminar" (click)="eliminar(comercio)">
+                    <app-icon nombre="tacho" />
+                  </button>
+                }
+              </td>
+            </tr>
+          } @empty {
+            @if (!cargando()) {
+              <tr>
+                <td colspan="6" class="vacio">
+                  @if (hayFiltros()) {
+                    No hay comercios que coincidan con la búsqueda.
+                  } @else {
+                    Todavía no hay comercios cargados.
+                  }
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <footer class="pie">
+      <span class="conteo">
+        @if (resultado(); as pagina) {
+          @if (pagina.total) {
+            Mostrando {{ desde() }} a {{ hasta() }} de {{ pagina.total }} comercios
+          } @else {
+            Sin resultados
+          }
+        }
+      </span>
+
+      @if (paginas().length) {
+        <nav class="paginacion">
+          <button type="button" class="pagina"
+                  [disabled]="!resultado()?.hayAnterior"
+                  (click)="irAPagina(resultado()!.pagina - 1)">
+            <app-icon nombre="anterior" [tamano]="16" />
+          </button>
+
+          @for (numero of paginas(); track numero) {
+            <button type="button" class="pagina"
+                    [class.actual]="numero === resultado()!.pagina"
+                    (click)="irAPagina(numero)">
+              {{ numero }}
+            </button>
+          }
+
+          <button type="button" class="pagina"
+                  [disabled]="!resultado()?.haySiguiente"
+                  (click)="irAPagina(resultado()!.pagina + 1)">
+            <app-icon nombre="siguiente" [tamano]="16" />
+          </button>
+        </nav>
+      }
+    </footer>
+  }
+</section>
+
+@if (formularioAbierto()) {
+  <app-comercio-form
+    [comercio]="comercioEnEdicion()"
+    [rubros]="rubros()"
+    [estados]="estados()"
+    (guardado)="alGuardar()"
+    (cerrar)="cerrarFormulario()" />
+}

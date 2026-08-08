@@ -1,0 +1,117 @@
+<app-modal [titulo]="titulo()" (cerrar)="cerrar.emit()">
+  <form [formGroup]="formulario" (ngSubmit)="guardar()">
+
+    @if (errorGeneral(); as mensaje) {
+      <p class="aviso">{{ mensaje }}</p>
+    }
+
+    <div class="campo">
+      <label for="nombreComercial">Nombre comercial *</label>
+      <input id="nombreComercial" type="text" formControlName="nombreComercial" maxlength="150"
+             [class.invalido]="controles.nombreComercial.touched && controles.nombreComercial.invalid" />
+      @if (controles.nombreComercial.touched && controles.nombreComercial.invalid) {
+        <span class="error-campo">
+          {{ controles.nombreComercial.errors?.['servidor'] ?? 'El nombre comercial es obligatorio.' }}
+        </span>
+      }
+    </div>
+
+    <div class="grilla">
+      <div class="campo">
+        <label for="cuit">CUIT *</label>
+        <input id="cuit" type="text" formControlName="cuit" placeholder="20-12345678-6"
+               [class.invalido]="controles.cuit.touched && controles.cuit.invalid" />
+        @if (controles.cuit.touched && controles.cuit.invalid) {
+          <span class="error-campo">
+            @if (controles.cuit.errors?.['servidor']) {
+              {{ controles.cuit.errors?.['servidor'] }}
+            } @else if (controles.cuit.errors?.['required']) {
+              El CUIT es obligatorio.
+            } @else {
+              El CUIT no pasa la verificación por módulo 11.
+            }
+          </span>
+        }
+      </div>
+
+      <div class="campo">
+        <label for="rubroId">Rubro *</label>
+        <select id="rubroId" formControlName="rubroId"
+                [class.invalido]="controles.rubroId.touched && controles.rubroId.invalid">
+          <option [value]="0" disabled>Elegí un rubro</option>
+          @for (rubro of rubros(); track rubro.id) {
+            <option [value]="rubro.id">{{ rubro.nombre }}</option>
+          }
+        </select>
+        @if (controles.rubroId.touched && controles.rubroId.invalid) {
+          <span class="error-campo">
+            {{ controles.rubroId.errors?.['servidor'] ?? 'Elegí un rubro.' }}
+          </span>
+        }
+      </div>
+    </div>
+
+    <div class="campo">
+      <label for="nombreContacto">Nombre del contacto *</label>
+      <input id="nombreContacto" type="text" formControlName="nombreContacto" maxlength="120"
+             [class.invalido]="controles.nombreContacto.touched && controles.nombreContacto.invalid" />
+      @if (controles.nombreContacto.touched && controles.nombreContacto.invalid) {
+        <span class="error-campo">
+          {{ controles.nombreContacto.errors?.['servidor'] ?? 'El nombre del contacto es obligatorio.' }}
+        </span>
+      }
+    </div>
+
+    <div class="grilla">
+      <div class="campo">
+        <label for="telefono">Teléfono</label>
+        <input id="telefono" type="tel" formControlName="telefono" maxlength="30"
+               [class.invalido]="controles.telefono.touched && controles.telefono.invalid" />
+        @if (controles.telefono.errors?.['servidor']) {
+          <span class="error-campo">{{ controles.telefono.errors?.['servidor'] }}</span>
+        }
+      </div>
+
+      <div class="campo">
+        <label for="email">Email</label>
+        <input id="email" type="email" formControlName="email" maxlength="150"
+               [class.invalido]="controles.email.touched && controles.email.invalid" />
+        @if (controles.email.touched && controles.email.invalid) {
+          <span class="error-campo">
+            {{ controles.email.errors?.['servidor'] ?? 'El email no tiene un formato válido.' }}
+          </span>
+        }
+      </div>
+    </div>
+
+    @if (esEdicion()) {
+      <div class="campo">
+        <label for="estado">Estado</label>
+        <select id="estado" formControlName="estado">
+          @for (estado of estadosDisponibles(); track estado.codigo) {
+            <option [value]="estado.codigo">{{ estado.nombre }}</option>
+          }
+        </select>
+        <span class="ayuda">
+          El embudo no permite retrocesos: solo aparecen las transiciones válidas desde el estado actual.
+        </span>
+      </div>
+    }
+
+    <div class="campo">
+      <label for="notas">Notas</label>
+      <textarea id="notas" formControlName="notas" rows="4" maxlength="4000"
+                placeholder="Contexto de la oportunidad, necesidades detectadas, objeciones…"></textarea>
+      @if (controles.notas.errors?.['servidor']) {
+        <span class="error-campo">{{ controles.notas.errors?.['servidor'] }}</span>
+      }
+    </div>
+
+    <footer>
+      <button type="button" class="boton boton-secundario" (click)="cerrar.emit()">Cancelar</button>
+      <button type="submit" class="boton" [disabled]="guardando()">
+        {{ guardando() ? 'Guardando…' : 'Guardar' }}
+      </button>
+    </footer>
+  </form>
+</app-modal>

@@ -1,0 +1,18 @@
+:host { display: inline-flex; }
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badge-nuevo         { background: #e7effd; color: #2f5bea; }
+.badge-contactado    { background: #dcf5ea; color: #10795a; }
+.badge-interesado    { background: #fdf0d5; color: #a16207; }
+.badge-documentacion { background: #ece7fd; color: #6d38d9; }
+.badge-aprobado      { background: #d9f7e3; color: #157f3f; }
+.badge-rechazado     { background: #fde5e5; color: #b42318; }
