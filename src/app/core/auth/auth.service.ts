@@ -89,6 +89,50 @@ export class AuthService {
     this.sesion.set(sesion);
   }
 
+  /**
+   * Atajo de desarrollo: arma una sesión con un token fabricado en el cliente,
+   * para poder trabajar en las pantallas mientras el backend todavía no expone
+   * `/api/auth/login`.
+   *
+   * No es un agujero de seguridad: **cualquiera puede hacer esto a mano desde la
+   * consola del navegador**, precisamente porque el frontend no verifica firmas
+   * ni decide permisos. Lo único que habilita es la navegación; en cuanto el
+   * backend tenga [Authorize], este token no va a pasar ningún endpoint.
+   *
+   * Queda inhabilitado en el build de producción.
+   */
+  entrarComoDev(rol: Rol): void {
+    if (environment.produccion) return;
+
+    const payload = {
+      nameid: rol === 'Admin' ? 1 : 2,
+      unique_name: rol === 'Admin' ? 'Admin de prueba' : 'Moderador de prueba',
+      email: rol === 'Admin' ? 'admin@zoco.test' : 'moderador@zoco.test',
+      role: rol,
+      exp: Math.floor(Date.now() / 1000) + 60 * 60 * 8
+    };
+
+    const base64url = (objeto: object) =>
+      btoa(JSON.stringify(objeto)).replace(/\+/g, '-').replace(/\//g, '_');
+
+    const token = [
+      base64url({ alg: 'HS256', typ: 'JWT' }),
+      base64url(payload),
+      'firma-de-desarrollo'
+    ].join('.');
+
+    this.establecerSesion({
+      token,
+      expiraEn: new Date(payload.exp * 1000).toISOString(),
+      usuario: {
+        id: payload.nameid,
+        email: payload.email,
+        nombreCompleto: payload.unique_name,
+        rol
+      }
+    });
+  }
+
   private cargarSesion(): Sesion | null {
     const guardada = localStorage.getItem(CLAVE_SESION);
     if (!guardada) return null;

@@ -48,6 +48,18 @@ No hay secretos en este repositorio: **un frontend no puede guardar secretos**,
 porque todo lo que se compila llega al navegador del usuario. El JWT lo emite el
 backend y se guarda en `localStorage` solo durante la sesión.
 
+### Atajo de desarrollo
+
+Mientras el backend no expone `POST /api/auth/login`, la pantalla de login
+muestra dos botones —*Entrar como Admin* y *Entrar como Moderador*— que arman
+una sesión con un token fabricado en el cliente.
+
+Sirve para trabajar en las pantallas y para comparar los dos roles. **No es un
+agujero de seguridad**: cualquiera puede fabricar ese token a mano desde la
+consola del navegador, justamente porque el frontend no verifica firmas ni
+decide permisos. Quien autoriza es el backend. El atajo además queda excluido
+del build de producción por `environment.produccion`.
+
 ## Comandos
 
 | Comando | Qué hace |

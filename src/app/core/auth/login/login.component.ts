@@ -2,6 +2,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { environment } from '../../../../environments/environment';
+import { Rol } from '../../../shared/models/usuario';
 import { mensajeDeError } from '../../../shared/util/problem-details.util';
 import { AuthService } from '../auth.service';
 
@@ -19,6 +21,9 @@ export class LoginComponent {
 
   enviando = signal(false);
   error = signal<string | null>(null);
+
+  /** El atajo de desarrollo no se compila en el build de producción. */
+  esDesarrollo = !environment.produccion;
 
   formulario = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
@@ -49,5 +54,11 @@ export class LoginComponent {
         );
       }
     });
+  }
+
+  /** Entra sin backend, para poder trabajar en las pantallas mientras el JWT no existe. */
+  entrarComoDev(rol: Rol): void {
+    this.auth.entrarComoDev(rol);
+    this.router.navigate(['/comercios']);
   }
 }

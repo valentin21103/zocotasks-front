@@ -41,5 +41,19 @@
     <button type="submit" class="boton" [disabled]="enviando()">
       {{ enviando() ? 'Ingresando…' : 'Ingresar' }}
     </button>
+
+    @if (esDesarrollo) {
+      <div class="atajo-dev">
+        <span>Solo en desarrollo — el backend todavía no expone /api/auth/login</span>
+        <div>
+          <button type="button" class="boton boton-secundario" (click)="entrarComoDev('Admin')">
+            Entrar como Admin
+          </button>
+          <button type="button" class="boton boton-secundario" (click)="entrarComoDev('Moderador')">
+            Entrar como Moderador
+          </button>
+        </div>
+      </div>
+    }
   </form>
 </div>
