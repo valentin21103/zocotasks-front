@@ -1,0 +1,9 @@
+# El repositorio guarda LF y cada sistema recibe en el checkout lo que le
+# corresponde. Sin esto, un repo creado en Windows guarda CRLF y el CI en Linux
+# ve todos los archivos como modificados. Es barato ahora e imposible de
+# arreglar limpio después.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.ico binary

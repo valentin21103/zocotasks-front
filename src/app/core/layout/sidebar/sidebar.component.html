@@ -1,0 +1,20 @@
+<aside class="sidebar">
+  <div class="marca">
+    <span class="logo">Z</span>
+    <span>ZOCO Tasks</span>
+  </div>
+
+  <nav>
+    <a routerLink="/comercios" routerLinkActive="activo">Comercios</a>
+  </nav>
+
+  @if (auth.sesion(); as sesion) {
+    <div class="sesion">
+      <div class="nombre">{{ sesion.nombreCompleto }}</div>
+      <div class="rol">{{ sesion.rol }}</div>
+      <button type="button" class="boton boton-secundario" (click)="auth.logout()">
+        Cerrar sesión
+      </button>
+    </div>
+  }
+</aside>

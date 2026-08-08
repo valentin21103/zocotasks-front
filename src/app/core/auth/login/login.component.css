@@ -1,0 +1,50 @@
+.pantalla {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  padding: var(--espacio-4);
+}
+
+.caja {
+  width: 100%;
+  max-width: 380px;
+}
+
+.encabezado {
+  text-align: center;
+  margin-bottom: var(--espacio-5);
+}
+
+.encabezado h1 {
+  font-size: 20px;
+  margin-top: var(--espacio-2);
+}
+
+.encabezado p {
+  margin: var(--espacio-1) 0 0;
+  font-size: 13px;
+  color: var(--color-texto-suave);
+}
+
+.logo {
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--color-primario);
+  color: #fff;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.error-general {
+  margin: 0 0 var(--espacio-4);
+  padding: var(--espacio-3);
+  border-radius: var(--radio);
+  background: rgba(214, 69, 69, .08);
+  color: var(--color-peligro);
+  font-size: 13px;
+}
+
+.boton { width: 100%; }

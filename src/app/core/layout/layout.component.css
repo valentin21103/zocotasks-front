@@ -1,0 +1,15 @@
+.layout {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  min-height: 100vh;
+}
+
+.contenido {
+  padding: var(--espacio-6);
+  overflow-x: auto;
+}
+
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr; }
+  .contenido { padding: var(--espacio-4); }
+}

@@ -1,0 +1,123 @@
+/**
+ * Estilos globales.
+ *
+ * Todo el color y el espaciado sale de variables CSS: cambiar la identidad
+ * visual de la aplicación es tocar este bloque y nada más.
+ */
+
+:root {
+  --color-fondo: #f5f6f8;
+  --color-superficie: #ffffff;
+  --color-borde: #e2e5ea;
+  --color-texto: #1c2430;
+  --color-texto-suave: #667085;
+
+  --color-primario: #2f5bea;
+  --color-primario-hover: #2449c4;
+  --color-peligro: #d64545;
+  --color-exito: #2e9e5b;
+
+  --radio: 10px;
+  --sombra: 0 1px 2px rgba(16, 24, 40, .06), 0 1px 3px rgba(16, 24, 40, .1);
+
+  --espacio-1: 4px;
+  --espacio-2: 8px;
+  --espacio-3: 12px;
+  --espacio-4: 16px;
+  --espacio-5: 24px;
+  --espacio-6: 32px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  color: var(--color-texto);
+  background: var(--color-fondo);
+}
+
+h1, h2, h3 { margin: 0; font-weight: 600; }
+
+a { color: inherit; text-decoration: none; }
+
+/* ── Formularios ───────────────────────────────────────────── */
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-1);
+  margin-bottom: var(--espacio-4);
+}
+
+.campo label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-texto-suave);
+}
+
+input, select, textarea {
+  font: inherit;
+  color: inherit;
+  padding: 9px 11px;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  background: var(--color-superficie);
+  outline: none;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--color-primario);
+  box-shadow: 0 0 0 3px rgba(47, 91, 234, .12);
+}
+
+input.invalido, select.invalido, textarea.invalido {
+  border-color: var(--color-peligro);
+}
+
+.error-campo {
+  font-size: 12px;
+  color: var(--color-peligro);
+}
+
+/* ── Botones ───────────────────────────────────────────────── */
+
+.boton {
+  font: inherit;
+  font-weight: 500;
+  padding: 9px 16px;
+  border: 1px solid transparent;
+  border-radius: var(--radio);
+  background: var(--color-primario);
+  color: #fff;
+  cursor: pointer;
+}
+
+.boton:hover:not(:disabled) { background: var(--color-primario-hover); }
+.boton:disabled { opacity: .55; cursor: not-allowed; }
+
+.boton-secundario {
+  background: var(--color-superficie);
+  color: var(--color-texto);
+  border-color: var(--color-borde);
+}
+
+.boton-secundario:hover:not(:disabled) { background: var(--color-fondo); }
+
+.boton-peligro { background: var(--color-peligro); }
+.boton-peligro:hover:not(:disabled) { background: #b83a3a; }
+
+/* ── Superficies ───────────────────────────────────────────── */
+
+.tarjeta {
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra);
+  padding: var(--espacio-5);
+}
