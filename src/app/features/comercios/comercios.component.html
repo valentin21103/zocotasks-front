@@ -164,7 +164,6 @@
 @if (formularioAbierto()) {
   <app-comercio-form
     [rubros]="rubros()"
-    [estados]="estados()"
     (guardado)="alGuardar()"
     (cerrar)="cerrarFormulario()" />
 }

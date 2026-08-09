@@ -84,20 +84,6 @@
       </div>
     </div>
 
-    @if (esEdicion()) {
-      <div class="campo">
-        <label for="estado">Estado</label>
-        <select id="estado" formControlName="estado">
-          @for (estado of estadosDisponibles(); track estado.codigo) {
-            <option [value]="estado.codigo">{{ estado.nombre }}</option>
-          }
-        </select>
-        <span class="ayuda">
-          El embudo no permite retrocesos: solo aparecen las transiciones válidas desde el estado actual.
-        </span>
-      </div>
-    }
-
     <div class="campo">
       <label for="notas">Notas</label>
       <textarea id="notas" formControlName="notas" rows="4" maxlength="4000"

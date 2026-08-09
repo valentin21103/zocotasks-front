@@ -1,14 +1,10 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, computed, inject, input, output, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Observable, of, switchMap } from 'rxjs';
+import { Observable } from 'rxjs';
 import { ComercioService } from '../../../features/comercios/comercio.service';
-import { EstadoCatalogoDto, RubroDto } from '../../models/catalogo';
-import {
-  ComercioDetalleDto,
-  CrearComercioDto,
-  EstadoComercio
-} from '../../models/comercio';
+import { RubroDto } from '../../models/catalogo';
+import { ComercioDetalleDto, CrearComercioDto } from '../../models/comercio';
 import { NotificacionService } from '../../services/notificacion.service';
 import { soloDigitos, validadorCuit } from '../../util/cuit.util';
 import {
@@ -20,16 +16,11 @@ import {
 import { ModalComponent } from '../modal/modal.component';
 
 /**
- * Alta y edición de comercios.
+ * Alta y edición de los datos del comercio.
  *
- * En edición incluye el estado, aunque el backend no lo acepte en el PUT: se
- * guarda con dos llamadas, primero los datos y después la transición por su
- * endpoint propio. Es deliberado del lado del servidor —si el estado viajara en
- * el PUT se podría saltear la máquina de estados—, pero para el usuario editar
- * un comercio es una sola acción y así se comporta.
- *
- * El combo de estado se arma con `transicionesPosibles`, que ya vienen
- * calculadas: es imposible elegir una transición inválida.
+ * El estado no está acá: tiene su propio apartado en la ficha. Son dos acciones
+ * distintas —corregir un teléfono no es lo mismo que mover una oportunidad en
+ * el embudo— y el backend también las separa en dos endpoints.
  */
 @Component({
   selector: 'app-comercio-form',
@@ -42,7 +33,6 @@ export class ComercioFormComponent implements OnInit {
   /** `null` es alta; con detalle es edición. */
   comercio = input<ComercioDetalleDto | null>(null);
   rubros = input.required<RubroDto[]>();
-  estados = input.required<EstadoCatalogoDto[]>();
 
   guardado = output<void>();
   cerrar = output<void>();
@@ -58,17 +48,6 @@ export class ComercioFormComponent implements OnInit {
   esEdicion = computed(() => this.detalle() !== null);
   titulo = computed(() => (this.esEdicion() ? 'Editar comercio' : 'Nuevo comercio'));
 
-  /** El estado actual más las transiciones permitidas desde él. */
-  estadosDisponibles = computed(() => {
-    const actual = this.detalle();
-    if (!actual) return [];
-
-    return [actual.estado, ...actual.transicionesPosibles].map(codigo => ({
-      codigo,
-      nombre: this.estados().find(e => e.codigo === codigo)?.nombre ?? codigo
-    }));
-  });
-
   formulario = this.fb.nonNullable.group({
     nombreComercial: ['', [Validators.required, Validators.maxLength(150)]],
     cuit: ['', [Validators.required, validadorCuit]],
@@ -76,7 +55,6 @@ export class ComercioFormComponent implements OnInit {
     telefono: ['', [Validators.maxLength(30)]],
     email: ['', [Validators.email, Validators.maxLength(150)]],
     rubroId: [0, [Validators.required, Validators.min(1)]],
-    estado: [''],
     notas: ['', [Validators.maxLength(4000)]]
   });
 
@@ -101,7 +79,7 @@ export class ComercioFormComponent implements OnInit {
     const detalle = this.detalle();
 
     const peticion: Observable<ComercioDetalleDto> = detalle
-      ? this.actualizar(detalle)
+      ? this.servicio.Actualizar(detalle.id, this.aDto())
       : this.servicio.Crear(this.aDto());
 
     peticion.subscribe({
@@ -115,26 +93,6 @@ export class ComercioFormComponent implements OnInit {
         this.manejarError(error);
       }
     });
-  }
-
-  /**
-   * Primero los datos y después el estado, si cambió.
-   *
-   * El orden importa: el PUT devuelve un ETag nuevo que el servicio guarda, y el
-   * PATCH necesita ese valor. Al revés, el segundo pedido iría con el token
-   * viejo y el backend respondería 409.
-   */
-  private actualizar(detalle: ComercioDetalleDto): Observable<ComercioDetalleDto> {
-    const nuevoEstado = this.formulario.controls.estado.value as EstadoComercio;
-    const cambioElEstado = nuevoEstado !== detalle.estado;
-
-    return this.servicio.Actualizar(detalle.id, this.aDto()).pipe(
-      switchMap(actualizado =>
-        cambioElEstado
-          ? this.servicio.CambiarEstado(detalle.id, nuevoEstado)
-          : of(actualizado)
-      )
-    );
   }
 
   private aDto(): CrearComercioDto {
@@ -161,7 +119,6 @@ export class ComercioFormComponent implements OnInit {
       telefono: comercio.telefono ?? '',
       email: comercio.email ?? '',
       rubroId: comercio.rubroId,
-      estado: comercio.estado,
       notas: comercio.notas ?? ''
     });
   }
@@ -181,8 +138,7 @@ export class ComercioFormComponent implements OnInit {
       return;
     }
 
-    // Otro usuario grabó primero. Se le ofrece traer los datos actuales; el
-    // 409 por transición inválida ya lo avisa el interceptor.
+    // Otro usuario grabó primero: se le ofrece traer los datos actuales.
     if (error.status === 409 && codigoDeError(error) === 'conflicto_de_concurrencia') {
       this.resolverConflicto(mensajeDeError(error));
       return;

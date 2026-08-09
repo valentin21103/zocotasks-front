@@ -50,9 +50,6 @@
       <dt>Rubro</dt>
       <dd>{{ comercio.rubro }}</dd>
 
-      <dt>Estado</dt>
-      <dd><app-estado-badge [estado]="comercio.estado" [nombre]="comercio.estadoNombre" /></dd>
-
       <dt>Fecha de creación</dt>
       <dd>{{ comercio.fechaCreacion | date:'dd/MM/yyyy HH:mm' }}</dd>
 
@@ -64,6 +61,38 @@
       <dt>Notas</dt>
       <dd class="notas">{{ comercio.notas || 'Sin notas.' }}</dd>
     </dl>
+  </section>
+
+  <section class="tarjeta embudo">
+    <header class="encabezado">
+      <h2>Estado en el embudo</h2>
+      <app-estado-badge [estado]="comercio.estado" [nombre]="comercio.estadoNombre" />
+    </header>
+
+    <div class="pasos">
+      @for (paso of pasos(); track paso.codigo) {
+        <button type="button"
+                class="paso"
+                [class.actual]="paso.actual"
+                [class.disponible]="paso.disponible"
+                [class.recorrido]="paso.recorrido"
+                [disabled]="!paso.disponible || cambiandoEstado()"
+                (click)="cambiarEstado(paso.codigo, paso.nombre)">
+          {{ paso.nombre }}
+        </button>
+      }
+    </div>
+
+    <p class="ayuda">
+      @if (cambiandoEstado()) {
+        Cambiando el estado…
+      } @else if (comercio.transicionesPosibles.length) {
+        Hacé clic en el estado al que querés mover el comercio. Solo se habilitan las
+        transiciones que el embudo permite desde <strong>{{ comercio.estadoNombre }}</strong>.
+      } @else {
+        <strong>{{ comercio.estadoNombre }}</strong> es un estado final: el comercio ya no se mueve.
+      }
+    </p>
   </section>
 
   <section class="tarjeta interacciones">
@@ -115,7 +144,6 @@
     <app-comercio-form
       [comercio]="comercio"
       [rubros]="rubros()"
-      [estados]="estados()"
       (guardado)="alEditar()"
       (cerrar)="editando.set(false)" />
   }
