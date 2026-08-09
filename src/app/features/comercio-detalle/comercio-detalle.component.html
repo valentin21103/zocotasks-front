@@ -75,7 +75,6 @@
                 class="paso"
                 [class.actual]="paso.actual"
                 [class.disponible]="paso.disponible"
-                [class.recorrido]="paso.recorrido"
                 [disabled]="!paso.disponible || cambiandoEstado()"
                 (click)="cambiarEstado(paso.codigo, paso.nombre)">
           {{ paso.nombre }}
@@ -87,8 +86,7 @@
       @if (cambiandoEstado()) {
         Cambiando el estado…
       } @else if (comercio.transicionesPosibles.length) {
-        Hacé clic en el estado al que querés mover el comercio. Solo se habilitan las
-        transiciones que el embudo permite desde <strong>{{ comercio.estadoNombre }}</strong>.
+        Hacé clic en el estado al que querés mover el comercio.
       } @else {
         <strong>{{ comercio.estadoNombre }}</strong> es un estado final: el comercio ya no se mueve.
       }

@@ -100,14 +100,6 @@
   cursor: not-allowed;
 }
 
-/* Ya pasó por acá. */
-.paso.recorrido {
-  border-color: transparent;
-  background: var(--color-fondo);
-  color: var(--color-texto-suave);
-  text-decoration: line-through;
-}
-
 /* Donde está parado. */
 .paso.actual {
   border-color: var(--color-primario);

@@ -71,26 +71,22 @@ export class ComercioDetalleComponent {
   });
 
   /**
-   * El embudo completo, marcando dónde está el comercio, por dónde ya pasó y a
-   * dónde puede ir.
+   * El embudo completo, marcando dónde está el comercio y a dónde puede ir.
    *
    * Qué transiciones se habilitan **no lo decide el frontend**: viene en
-   * `transicionesPosibles`, calculado por el backend según el estado actual. Si
-   * mañana el backend permite otras, acá se habilitan solas.
+   * `transicionesPosibles`, calculado por el backend según el estado actual. Hoy
+   * el movimiento es libre y se habilitan todas menos la actual; si mañana la
+   * regla se vuelve a restringir, acá se deshabilitan solas.
    */
   pasos = computed(() => {
     const comercio = this.comercio();
     if (!comercio) return [];
 
-    const catalogo = this.estados();
-    const ordenActual = catalogo.find(e => e.codigo === comercio.estado)?.orden ?? 0;
-
-    return catalogo.map(estado => ({
+    return this.estados().map(estado => ({
       codigo: estado.codigo as EstadoComercio,
       nombre: estado.nombre,
       actual: estado.codigo === comercio.estado,
-      disponible: comercio.transicionesPosibles.includes(estado.codigo as EstadoComercio),
-      recorrido: !estado.esFinal && estado.orden < ordenActual
+      disponible: comercio.transicionesPosibles.includes(estado.codigo as EstadoComercio)
     }));
   });
 
