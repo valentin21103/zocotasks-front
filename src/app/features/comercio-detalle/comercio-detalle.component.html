@@ -64,9 +64,10 @@
   </section>
 
   <section class="tarjeta embudo">
+    <!-- Sin badge acá: el estado actual ya se lee en el paso resaltado, y
+         repetirlo al lado del título no agrega nada. -->
     <header class="encabezado">
       <h2>Estado en el embudo</h2>
-      <app-estado-badge [estado]="comercio.estado" [nombre]="comercio.estadoNombre" />
     </header>
 
     <div class="pasos">
