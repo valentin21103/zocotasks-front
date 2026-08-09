@@ -37,3 +37,11 @@ export function validadorCuit(control: AbstractControl): ValidationErrors | null
 export function soloDigitos(valor: string): string {
   return valor.replace(/\D/g, '');
 }
+
+/** Los once dígitos que devuelve el backend, con el formato con el que se lee. */
+export function formatearCuit(valor: string): string {
+  const digitos = soloDigitos(valor);
+  if (digitos.length !== 11) return valor;
+
+  return `${digitos.slice(0, 2)}-${digitos.slice(2, 10)}-${digitos.slice(10)}`;
+}

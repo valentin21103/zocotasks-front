@@ -113,21 +113,25 @@ td.acciones {
   padding-right: var(--espacio-5);
 }
 
-.accion {
-  display: grid;
-  place-items: center;
-  width: 30px;
-  height: 30px;
-  border: none;
-  border-radius: 8px;
-  background: transparent;
-  color: var(--color-texto-suave);
-  cursor: pointer;
+/* Es la única acción de la fila y la puerta de entrada a la ficha, donde vive
+   todo lo demás: se muestra como botón con texto y no como un icono chico. */
+.ver {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  background: var(--color-superficie);
+  font-weight: 500;
+  color: var(--color-texto);
 }
 
-.accion:hover { background: var(--color-fondo); color: var(--color-primario); }
-.accion.peligro { color: var(--color-peligro); }
-.accion.peligro:hover { background: rgba(214, 69, 69, .1); color: var(--color-peligro); }
+.ver:hover {
+  border-color: var(--color-primario);
+  background: rgba(47, 91, 234, .06);
+  color: var(--color-primario);
+}
 
 .vacio, .estado-vacio {
   padding: var(--espacio-6);

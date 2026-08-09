@@ -1,4 +1,213 @@
-.pendiente {
-  margin-top: var(--espacio-3);
+:host {
+  display: block;
+  max-width: 760px;
+}
+
+.tarjeta { padding: 0; }
+.tarjeta + .tarjeta { margin-top: var(--espacio-5); }
+
+/* ── Barra superior ────────────────────────────────────────── */
+
+.barra {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-4);
+  padding: var(--espacio-4) var(--espacio-5);
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.volver {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+  color: var(--color-primario);
+  white-space: nowrap;
+}
+
+.volver:hover { text-decoration: underline; }
+
+.barra h1 {
+  flex: 1;
+  font-size: 16px;
+  text-align: center;
+}
+
+.acciones {
+  display: flex;
+  gap: var(--espacio-2);
+}
+
+.acciones .boton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.boton.peligro {
+  color: var(--color-peligro);
+  border-color: rgba(214, 69, 69, .35);
+}
+
+.boton.peligro:hover:not(:disabled) { background: rgba(214, 69, 69, .08); }
+
+/* ── Datos ─────────────────────────────────────────────────── */
+
+.titulo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-4);
+  padding: var(--espacio-5) var(--espacio-5) 0;
+}
+
+.titulo h2 { font-size: 22px; }
+
+.datos {
+  display: grid;
+  grid-template-columns: 170px 1fr;
+  gap: var(--espacio-3) var(--espacio-4);
+  margin: 0;
+  padding: var(--espacio-5);
+}
+
+.datos dt {
+  font-weight: 500;
   color: var(--color-texto-suave);
+}
+
+.datos dd { margin: 0; }
+
+.notas { white-space: pre-line; }
+
+/* ── Interacciones ─────────────────────────────────────────── */
+
+.encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-4);
+  padding: var(--espacio-4) var(--espacio-5);
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.encabezado h2 { font-size: 16px; }
+
+.encabezado .boton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.interaccion {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--espacio-3);
+  padding: var(--espacio-4) var(--espacio-5);
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.interaccion:last-child { border-bottom: none; }
+
+.avatar {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  color: #fff;
+}
+
+.avatar-llamada     { background: #22a06b; }
+.avatar-whatsapp    { background: #25d366; }
+.avatar-reunion     { background: #7c5cf5; }
+.avatar-email       { background: #2f5bea; }
+.avatar-notainterna { background: #f0913a; }
+
+.texto { flex: 1; min-width: 0; }
+
+.texto h3 {
+  font-size: 14px;
+  margin-bottom: 2px;
+}
+
+.texto p {
+  margin: 0;
+  color: var(--color-texto-suave);
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.momento {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  flex: none;
+  font-size: 13px;
+  color: var(--color-texto-suave);
+}
+
+.hora { font-size: 12px; }
+
+/* ── Menú de la interacción ────────────────────────────────── */
+
+.menu { position: relative; flex: none; }
+
+.puntos {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--color-texto-suave);
+  cursor: pointer;
+}
+
+.puntos:hover { background: var(--color-fondo); }
+
+.opciones {
+  position: absolute;
+  top: 32px;
+  right: 0;
+  z-index: 5;
+  min-width: 140px;
+  padding: 4px;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  background: var(--color-superficie);
+  box-shadow: var(--sombra);
+}
+
+.opciones button {
+  width: 100%;
+  padding: 8px 10px;
+  border: none;
+  border-radius: 6px;
+  background: none;
+  font: inherit;
+  text-align: left;
+  color: var(--color-peligro);
+  cursor: pointer;
+}
+
+.opciones button:hover { background: rgba(214, 69, 69, .08); }
+
+/* ── Estados ───────────────────────────────────────────────── */
+
+.vacio, .estado-vacio {
+  padding: var(--espacio-6);
+  text-align: center;
+  color: var(--color-texto-suave);
+}
+
+.estado-vacio p { margin: 0 0 var(--espacio-4); }
+
+@media (max-width: 640px) {
+  .barra { flex-wrap: wrap; }
+  .barra h1 { order: -1; width: 100%; text-align: left; }
+  .datos { grid-template-columns: 1fr; gap: var(--espacio-1); }
+  .datos dt { margin-top: var(--espacio-3); }
 }

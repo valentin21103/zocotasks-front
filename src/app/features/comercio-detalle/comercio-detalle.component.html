@@ -1,2 +1,134 @@
-<h1>Comercio #{{ id }}</h1>
-<p class="pendiente">La ficha con interacciones y análisis se implementa en un bloque posterior.</p>
+@if (error(); as mensaje) {
+  <section class="tarjeta estado-vacio">
+    <p>{{ mensaje }}</p>
+    <a class="boton boton-secundario" routerLink="/comercios">Volver al listado</a>
+  </section>
+} @else if (comercio(); as comercio) {
+
+  <section class="tarjeta ficha">
+    <header class="barra">
+      <a class="volver" routerLink="/comercios">
+        <app-icon nombre="volver" [tamano]="16" />
+        Volver al listado
+      </a>
+
+      <h1>Detalle del comercio</h1>
+
+      <div class="acciones">
+        <button type="button" class="boton boton-secundario" (click)="editando.set(true)">
+          <app-icon nombre="lapiz" [tamano]="16" />
+          Editar
+        </button>
+
+        @if (auth.esAdmin()) {
+          <button type="button" class="boton boton-secundario peligro" (click)="eliminar()">
+            <app-icon nombre="tacho" [tamano]="16" />
+            Eliminar
+          </button>
+        }
+      </div>
+    </header>
+
+    <div class="titulo">
+      <h2>{{ comercio.nombreComercial }}</h2>
+      <app-estado-badge [estado]="comercio.estado" [nombre]="comercio.estadoNombre" />
+    </div>
+
+    <dl class="datos">
+      <dt>CUIT</dt>
+      <dd>{{ cuit() }}</dd>
+
+      <dt>Contacto</dt>
+      <dd>{{ comercio.nombreContacto }}</dd>
+
+      <dt>Teléfono</dt>
+      <dd>{{ comercio.telefono || '—' }}</dd>
+
+      <dt>Email</dt>
+      <dd>{{ comercio.email || '—' }}</dd>
+
+      <dt>Rubro</dt>
+      <dd>{{ comercio.rubro }}</dd>
+
+      <dt>Estado</dt>
+      <dd><app-estado-badge [estado]="comercio.estado" [nombre]="comercio.estadoNombre" /></dd>
+
+      <dt>Fecha de creación</dt>
+      <dd>{{ comercio.fechaCreacion | date:'dd/MM/yyyy HH:mm' }}</dd>
+
+      @if (comercio.fechaActualizacion) {
+        <dt>Última edición</dt>
+        <dd>{{ comercio.fechaActualizacion | date:'dd/MM/yyyy HH:mm' }}</dd>
+      }
+
+      <dt>Notas</dt>
+      <dd class="notas">{{ comercio.notas || 'Sin notas.' }}</dd>
+    </dl>
+  </section>
+
+  <section class="tarjeta interacciones">
+    <header class="encabezado">
+      <h2>Interacciones</h2>
+      <button type="button" class="boton" (click)="registrandoInteraccion.set(true)">
+        <app-icon nombre="mas" [tamano]="16" />
+        Nueva interacción
+      </button>
+    </header>
+
+    @for (interaccion of comercio.interacciones; track interaccion.id) {
+      <article class="interaccion">
+        <span [class]="claseDe(interaccion)">
+          <app-icon [nombre]="iconoDe(interaccion)" [tamano]="18" />
+        </span>
+
+        <div class="texto">
+          <h3>{{ interaccion.tipoNombre }}</h3>
+          <p>{{ interaccion.detalle }}</p>
+        </div>
+
+        <div class="momento">
+          <span>{{ interaccion.fecha | date:'dd/MM/yyyy' }}</span>
+          <span class="hora">{{ interaccion.fecha | date:'HH:mm' }}</span>
+        </div>
+
+        @if (auth.esAdmin()) {
+          <div class="menu">
+            <button type="button" class="puntos" aria-label="Acciones"
+                    (click)="alternarMenu(interaccion.id)">
+              <app-icon nombre="puntos" [tamano]="16" />
+            </button>
+
+            @if (menuAbierto() === interaccion.id) {
+              <div class="opciones">
+                <button type="button" (click)="eliminarInteraccion(interaccion)">Eliminar</button>
+              </div>
+            }
+          </div>
+        }
+      </article>
+    } @empty {
+      <p class="vacio">Todavía no hay interacciones registradas con este comercio.</p>
+    }
+  </section>
+
+  @if (editando()) {
+    <app-comercio-form
+      [comercio]="comercio"
+      [rubros]="rubros()"
+      [estados]="estados()"
+      (guardado)="alEditar()"
+      (cerrar)="editando.set(false)" />
+  }
+
+  @if (registrandoInteraccion()) {
+    <app-interaccion-form
+      [comercioId]="comercio.id"
+      (guardado)="alRegistrarInteraccion()"
+      (cerrar)="registrandoInteraccion.set(false)" />
+  }
+
+} @else if (cargando()) {
+  <section class="tarjeta estado-vacio">
+    <p>Cargando…</p>
+  </section>
+}

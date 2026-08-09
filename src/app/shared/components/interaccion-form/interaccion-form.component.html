@@ -1,0 +1,45 @@
+<app-modal titulo="Nueva interacción" (cerrar)="cerrar.emit()">
+  <form [formGroup]="formulario" (ngSubmit)="guardar()">
+
+    @if (errorGeneral(); as mensaje) {
+      <p class="aviso">{{ mensaje }}</p>
+    }
+
+    <div class="campo">
+      <label>Tipo</label>
+      <div class="tipos">
+        @for (tipo of tipos; track tipo.codigo) {
+          <label class="tipo" [class.elegido]="controles.tipo.value === tipo.codigo">
+            <input type="radio" formControlName="tipo" [value]="tipo.codigo" />
+            {{ tipo.nombre }}
+          </label>
+        }
+      </div>
+    </div>
+
+    <div class="campo">
+      <label for="fecha">Fecha y hora</label>
+      <input id="fecha" type="datetime-local" formControlName="fecha" [max]="maximo" />
+      <span class="ayuda">Si la dejás como está, queda registrada con el momento actual.</span>
+    </div>
+
+    <div class="campo">
+      <label for="detalle">Detalle *</label>
+      <textarea id="detalle" formControlName="detalle" rows="4" maxlength="2000"
+                placeholder="Qué se habló, qué pidió, qué quedó pendiente…"
+                [class.invalido]="controles.detalle.touched && controles.detalle.invalid"></textarea>
+      @if (controles.detalle.touched && controles.detalle.invalid) {
+        <span class="error-campo">
+          {{ controles.detalle.errors?.['servidor'] ?? 'El detalle es obligatorio.' }}
+        </span>
+      }
+    </div>
+
+    <footer>
+      <button type="button" class="boton boton-secundario" (click)="cerrar.emit()">Cancelar</button>
+      <button type="submit" class="boton" [disabled]="guardando()">
+        {{ guardando() ? 'Guardando…' : 'Registrar' }}
+      </button>
+    </footer>
+  </form>
+</app-modal>

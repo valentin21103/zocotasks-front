@@ -17,8 +17,3 @@ export interface RubroDto {
   id: number;
   nombre: string;
 }
-
-export interface TipoInteraccionCatalogoDto {
-  id: number;
-  nombre: string;
-}

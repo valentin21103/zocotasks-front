@@ -83,7 +83,7 @@
                 }
               </button>
             </th>
-            <th class="acciones">Acciones</th>
+            <th class="acciones"></th>
           </tr>
         </thead>
 
@@ -100,17 +100,10 @@
               </td>
               <td class="fecha">{{ comercio.fechaCreacion | date:'dd/MM/yyyy' }}</td>
               <td class="acciones">
-                <a class="accion" [routerLink]="['/comercios', comercio.id]" title="Ver detalle">
-                  <app-icon nombre="ojo" />
+                <a class="ver" [routerLink]="['/comercios', comercio.id]">
+                  <app-icon nombre="ojo" [tamano]="20" />
+                  Ver ficha
                 </a>
-                <button type="button" class="accion" title="Editar" (click)="editar(comercio)">
-                  <app-icon nombre="lapiz" />
-                </button>
-                @if (auth.esAdmin()) {
-                  <button type="button" class="accion peligro" title="Eliminar" (click)="eliminar(comercio)">
-                    <app-icon nombre="tacho" />
-                  </button>
-                }
               </td>
             </tr>
           } @empty {
@@ -170,7 +163,6 @@
 
 @if (formularioAbierto()) {
   <app-comercio-form
-    [comercio]="comercioEnEdicion()"
     [rubros]="rubros()"
     [estados]="estados()"
     (guardado)="alGuardar()"

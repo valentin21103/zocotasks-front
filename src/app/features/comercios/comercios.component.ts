@@ -12,7 +12,6 @@ import { EstadoBadgeComponent } from '../../shared/components/estado-badge/estad
 import { IconComponent } from '../../shared/components/icon/icon.component';
 import { EstadoCatalogoDto, RubroDto } from '../../shared/models/catalogo';
 import {
-  ComercioDetalleDto,
   ComercioFiltro,
   ComercioListItemDto,
   EstadoComercio,
@@ -20,7 +19,6 @@ import {
 } from '../../shared/models/comercio';
 import { PagedResult, TAMANO_PAGINA_DEFECTO } from '../../shared/models/paginacion';
 import { CatalogoService } from '../../shared/services/catalogo.service';
-import { NotificacionService } from '../../shared/services/notificacion.service';
 import { ComercioService } from './comercio.service';
 
 /** Columnas por las que se puede ordenar. `fecha` es el orden por defecto del backend. */
@@ -51,7 +49,6 @@ export class ComerciosComponent implements OnInit {
 
   private servicio = inject(ComercioService);
   private catalogos = inject(CatalogoService);
-  private notificacion = inject(NotificacionService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
@@ -67,9 +64,8 @@ export class ComerciosComponent implements OnInit {
 
   filtro = signal<ComercioFiltro>({});
 
-  /** Abierto en alta cuando el detalle es `null`; en edición cuando trae uno. */
+  /** El listado solo da de alta: editar y eliminar viven en la ficha. */
   formularioAbierto = signal(false);
-  comercioEnEdicion = signal<ComercioDetalleDto | null>(null);
 
   busqueda = new FormControl('', { nonNullable: true });
 
@@ -187,48 +183,16 @@ export class ComerciosComponent implements OnInit {
   }
 
   nuevo(): void {
-    this.comercioEnEdicion.set(null);
     this.formularioAbierto.set(true);
   }
 
-  /**
-   * El listado no trae las notas ni las transiciones posibles, así que editar
-   * empieza por leer el detalle. Ese GET además deja el ETag guardado en el
-   * servicio, que es lo que después habilita el guardado.
-   */
-  editar(comercio: ComercioListItemDto): void {
-    this.servicio.ObtenerPorId(comercio.id).subscribe({
-      next: detalle => {
-        this.comercioEnEdicion.set(detalle);
-        this.formularioAbierto.set(true);
-      }
-    });
-  }
-
-  async eliminar(comercio: ComercioListItemDto): Promise<void> {
-    const confirmado = await this.notificacion.confirmar(
-      '¿Eliminar el comercio?',
-      `"${comercio.nombreComercial}" deja de aparecer en el listado. Sus interacciones se conservan.`
-    );
-
-    if (!confirmado) return;
-
-    this.servicio.Eliminar(comercio.id).subscribe({
-      next: () => {
-        this.notificacion.exito('Comercio eliminado');
-        this.cargar();
-      }
-    });
-  }
-
   alGuardar(): void {
-    this.cerrarFormulario();
+    this.formularioAbierto.set(false);
     this.cargar();
   }
 
   cerrarFormulario(): void {
     this.formularioAbierto.set(false);
-    this.comercioEnEdicion.set(null);
   }
 
   private leerFiltro(params: ParamMap): ComercioFiltro {
