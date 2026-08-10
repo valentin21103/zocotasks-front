@@ -41,3 +41,7 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
+
+# Guia de estudio personal: notas propias, no documentacion del proyecto.
+# La documentacion publica es README.md y docs/ARQUITECTURA.md.
+/docs/GUIA-FRONTEND.md
