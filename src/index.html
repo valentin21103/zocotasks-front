@@ -2,9 +2,13 @@
 <!-- lang="es-AR" no es cosmético: con lang="en" el navegador cree que la página
      está en inglés, ofrece traducirla y termina mostrando "CORTE" donde dice
      CUIT y "Editor" donde dice Editar. -->
-<html lang="es-AR">
+<html lang="es-AR" translate="no">
 <head>
   <meta charset="utf-8">
+  <!-- La aplicacion es interna y solo en espaniol. Se desactiva el traductor
+       del navegador porque destroza los terminos del dominio: traduce CUIT
+       como "CORTE" y el boton Editar como "Editor". -->
+  <meta name="google" content="notranslate">
   <title>ZOCO Tasks</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
