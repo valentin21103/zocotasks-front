@@ -35,16 +35,19 @@
       </div>
 
       <div class="campo">
-        <label for="rubroId">
-          Rubro *
+        <!-- El boton va afuera del <label>: adentro, el click activaba tambien
+             el select asociado y se abria el desplegable junto con el modal. -->
+        <div class="etiqueta">
+          <label for="rubroId">Rubro *</label>
+
           @if (auth.esAdmin()) {
-            <button type="button" class="administrar" title="Administrar rubros"
+            <button type="button" class="administrar" title="Crear, renombrar o eliminar rubros"
                     (click)="administrandoRubros.set(true)">
-              <app-icon nombre="lapiz" [tamano]="14" />
-              Administrar
+              <app-icon nombre="lapiz" [tamano]="13" />
+              Administrar rubros
             </button>
           }
-        </label>
+        </div>
         <select id="rubroId" formControlName="rubroId"
                 [class.invalido]="controles.rubroId.touched && controles.rubroId.invalid">
           <option [value]="0" disabled>Elegí un rubro</option>
