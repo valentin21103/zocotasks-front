@@ -230,10 +230,16 @@ si el usuario la percibe donde corresponde. Un cartel que dice "hay datos
 inválidos" obliga a adivinar cuál; el mismo error debajo del campo de CUIT se
 entiende sin leer.
 
-Se valida también en el cliente (obligatorios, largos, formato de email, CUIT por
-módulo 11) para dar respuesta inmediata, pero **la validación del cliente es
+Se valida también en el cliente (obligatorios, largos, formato de email, CUIT de
+once dígitos) para dar respuesta inmediata, pero **la validación del cliente es
 usabilidad, no seguridad**: la que manda es la del servidor, y por eso sus
 errores se muestran aunque el formulario haya pasado la validación local.
+
+Con un corolario que conviene dejar escrito: **el cliente nunca puede ser más
+estricto que el servidor**. Si el backend acepta un dato y el formulario lo
+rechaza, el usuario se queda con algo válido que el sistema no le deja cargar y
+sin forma de entender por qué. Más permisivo se puede —el servidor rechaza
+después—; al revés, no.
 
 ---
 
