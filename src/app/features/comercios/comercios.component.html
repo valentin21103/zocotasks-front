@@ -16,14 +16,14 @@
 
     <select [value]="filtro().estado ?? ''" (change)="filtrarPorEstado($any($event.target).value)">
       <option value="">Estado: Todos</option>
-      @for (estado of estados(); track estado.id) {
+      @for (estado of catalogos.estados(); track estado.id) {
         <option [value]="estado.codigo">{{ estado.nombre }}</option>
       }
     </select>
 
     <select [value]="filtro().rubroId ?? ''" (change)="filtrarPorRubro($any($event.target).value)">
       <option value="">Rubro: Todos</option>
-      @for (rubro of rubros(); track rubro.id) {
+      @for (rubro of catalogos.rubros(); track rubro.id) {
         <option [value]="rubro.id">{{ rubro.nombre }}</option>
       }
     </select>
@@ -163,7 +163,6 @@
 
 @if (formularioAbierto()) {
   <app-comercio-form
-    [rubros]="rubros()"
     (guardado)="alGuardar()"
     (cerrar)="cerrarFormulario()" />
 }

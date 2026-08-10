@@ -35,11 +35,20 @@
       </div>
 
       <div class="campo">
-        <label for="rubroId">Rubro *</label>
+        <label for="rubroId">
+          Rubro *
+          @if (auth.esAdmin()) {
+            <button type="button" class="administrar" title="Administrar rubros"
+                    (click)="administrandoRubros.set(true)">
+              <app-icon nombre="lapiz" [tamano]="14" />
+              Administrar
+            </button>
+          }
+        </label>
         <select id="rubroId" formControlName="rubroId"
                 [class.invalido]="controles.rubroId.touched && controles.rubroId.invalid">
           <option [value]="0" disabled>Elegí un rubro</option>
-          @for (rubro of rubros(); track rubro.id) {
+          @for (rubro of rubrosDisponibles(); track rubro.id) {
             <option [value]="rubro.id">{{ rubro.nombre }}</option>
           }
         </select>
@@ -101,3 +110,7 @@
     </footer>
   </form>
 </app-modal>
+
+@if (administrandoRubros()) {
+  <app-rubros-abm (cerrar)="administrandoRubros.set(false)" />
+}

@@ -44,19 +44,15 @@ export class ComercioDetalleComponent {
 
   private servicio = inject(ComercioService);
   private interacciones = inject(InteraccionService);
-  private catalogos = inject(CatalogoService);
   private notificacion = inject(NotificacionService);
   private router = inject(Router);
-  private destroyRef = inject(DestroyRef);
 
   auth = inject(AuthService);
+  catalogos = inject(CatalogoService);
 
   comercio = signal<ComercioDetalleDto | null>(null);
   cargando = signal(true);
   error = signal<string | null>(null);
-
-  estados = signal<EstadoCatalogoDto[]>([]);
-  rubros = signal<RubroDto[]>([]);
 
   editando = signal(false);
   registrandoInteraccion = signal(false);
@@ -82,7 +78,7 @@ export class ComercioDetalleComponent {
     const comercio = this.comercio();
     if (!comercio) return [];
 
-    return this.estados().map(estado => ({
+    return this.catalogos.estados().map(estado => ({
       codigo: estado.codigo as EstadoComercio,
       nombre: estado.nombre,
       actual: estado.codigo === comercio.estado,
@@ -101,13 +97,8 @@ export class ComercioDetalleComponent {
   }
 
   constructor() {
-    this.catalogos.estados$
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({ next: estados => this.estados.set(estados), error: () => {} });
-
-    this.catalogos.rubros$
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({ next: rubros => this.rubros.set(rubros), error: () => {} });
+    this.catalogos.cargarEstados();
+    this.catalogos.cargarRubros();
   }
 
   cargar(): void {

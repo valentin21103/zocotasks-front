@@ -1,0 +1,77 @@
+<app-modal titulo="Rubros" (cerrar)="cerrar.emit()">
+
+  <form class="alta" (ngSubmit)="crear()">
+    <input type="text" name="nuevoNombre" [(ngModel)]="nuevoNombre"
+           placeholder="Nombre del rubro nuevo" maxlength="100" />
+    <button type="submit" class="boton" [disabled]="!nuevoNombre.trim() || guardando()">
+      <app-icon nombre="mas" [tamano]="16" />
+      Agregar
+    </button>
+  </form>
+
+  @if (error(); as mensaje) {
+    <p class="aviso">{{ mensaje }}</p>
+  }
+
+  @if (cargando()) {
+    <p class="vacio">Cargando…</p>
+  } @else {
+    <ul class="lista">
+      @for (rubro of rubros(); track rubro.id) {
+        <li [class.inactivo]="!rubro.activo">
+
+          @if (editandoId() === rubro.id) {
+            <input class="editor" type="text" name="nombreEditado" [(ngModel)]="nombreEditado"
+                   maxlength="100" autofocus
+                   (keyup.enter)="guardarNombre(rubro)"
+                   (keyup.escape)="cancelarEdicion()" />
+
+            <div class="acciones">
+              <button type="button" class="boton" [disabled]="guardando()"
+                      (click)="guardarNombre(rubro)">Guardar</button>
+              <button type="button" class="boton boton-secundario"
+                      (click)="cancelarEdicion()">Cancelar</button>
+            </div>
+          } @else {
+            <div class="datos">
+              <span class="nombre">{{ rubro.nombre }}</span>
+              <span class="uso">
+                @if (!rubro.activo) { <em>Inactivo</em> · }
+                @if (rubro.cantidadComercios) {
+                  {{ rubro.cantidadComercios }} comercio(s)
+                } @else {
+                  sin uso
+                }
+              </span>
+            </div>
+
+            <div class="acciones">
+              @if (!rubro.activo) {
+                <button type="button" class="boton boton-secundario"
+                        (click)="reactivar(rubro)">Reactivar</button>
+              }
+
+              <button type="button" class="accion" title="Renombrar"
+                      (click)="empezarAEditar(rubro)">
+                <app-icon nombre="lapiz" />
+              </button>
+
+              @if (rubro.activo) {
+                <button type="button" class="accion peligro" title="Eliminar"
+                        (click)="eliminar(rubro)">
+                  <app-icon nombre="tacho" />
+                </button>
+              }
+            </div>
+          }
+        </li>
+      } @empty {
+        <li class="vacio">Todavía no hay rubros cargados.</li>
+      }
+    </ul>
+  }
+
+  <footer>
+    <button type="button" class="boton boton-secundario" (click)="cerrar.emit()">Listo</button>
+  </footer>
+</app-modal>

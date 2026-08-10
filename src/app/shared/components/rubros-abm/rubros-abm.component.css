@@ -1,0 +1,99 @@
+.alta {
+  display: flex;
+  gap: var(--espacio-2);
+  margin-bottom: var(--espacio-4);
+}
+
+.alta input { flex: 1; }
+
+.alta .boton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.aviso {
+  margin: 0 0 var(--espacio-4);
+  padding: var(--espacio-3);
+  border-radius: var(--radio);
+  background: rgba(214, 69, 69, .08);
+  color: var(--color-peligro);
+  font-size: 13px;
+}
+
+.lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+}
+
+.lista li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-3);
+  padding: var(--espacio-3) var(--espacio-4);
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.lista li:last-child { border-bottom: none; }
+
+.lista li.inactivo .nombre {
+  color: var(--color-texto-suave);
+  text-decoration: line-through;
+}
+
+.datos {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.nombre { font-weight: 500; }
+
+.uso {
+  font-size: 12px;
+  color: var(--color-texto-suave);
+}
+
+.editor { flex: 1; }
+
+.acciones {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-1);
+  flex: none;
+}
+
+.acciones .boton { padding: 6px 12px; font-size: 13px; }
+
+.accion {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--color-texto-suave);
+  cursor: pointer;
+}
+
+.accion:hover { background: var(--color-fondo); color: var(--color-primario); }
+.accion.peligro { color: var(--color-peligro); }
+.accion.peligro:hover { background: rgba(214, 69, 69, .1); }
+
+.vacio {
+  padding: var(--espacio-5);
+  text-align: center;
+  color: var(--color-texto-suave);
+}
+
+footer {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: var(--espacio-4);
+}

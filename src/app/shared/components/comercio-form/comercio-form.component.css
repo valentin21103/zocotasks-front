@@ -14,6 +14,32 @@ textarea {
   color: var(--color-texto-suave);
 }
 
+/* El acceso al ABM vive pegado a la etiqueta del campo, que es donde aparece
+   la necesidad: si falta el rubro al cargar un comercio, se crea sin perder
+   lo que ya se escribió en el formulario. */
+label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-2);
+}
+
+.administrar {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border: 1px solid var(--color-borde);
+  border-radius: 999px;
+  background: var(--color-superficie);
+  font: inherit;
+  font-size: 12px;
+  color: var(--color-primario);
+  cursor: pointer;
+}
+
+.administrar:hover { background: rgba(47, 91, 234, .08); }
+
 .aviso {
   margin: 0 0 var(--espacio-4);
   padding: var(--espacio-3);

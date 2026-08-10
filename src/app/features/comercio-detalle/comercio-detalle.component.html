@@ -142,7 +142,6 @@
   @if (editando()) {
     <app-comercio-form
       [comercio]="comercio"
-      [rubros]="rubros()"
       (guardado)="alEditar()"
       (cerrar)="editando.set(false)" />
   }

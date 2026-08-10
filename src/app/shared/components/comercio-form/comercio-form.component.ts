@@ -2,10 +2,14 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, computed, inject, input, output, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
+import { AuthService } from '../../../core/auth/auth.service';
 import { ComercioService } from '../../../features/comercios/comercio.service';
 import { RubroDto } from '../../models/catalogo';
 import { ComercioDetalleDto, CrearComercioDto } from '../../models/comercio';
+import { CatalogoService } from '../../services/catalogo.service';
 import { NotificacionService } from '../../services/notificacion.service';
+import { RubrosAbmComponent } from '../rubros-abm/rubros-abm.component';
+import { IconComponent } from '../icon/icon.component';
 import { soloDigitos, validadorCuit } from '../../util/cuit.util';
 import {
   aplicarErroresAlFormulario,
@@ -24,7 +28,7 @@ import { ModalComponent } from '../modal/modal.component';
  */
 @Component({
   selector: 'app-comercio-form',
-  imports: [ReactiveFormsModule, ModalComponent],
+  imports: [ReactiveFormsModule, ModalComponent, IconComponent, RubrosAbmComponent],
   templateUrl: './comercio-form.component.html',
   styleUrl: './comercio-form.component.css'
 })
@@ -32,7 +36,6 @@ export class ComercioFormComponent implements OnInit {
 
   /** `null` es alta; con detalle es edición. */
   comercio = input<ComercioDetalleDto | null>(null);
-  rubros = input.required<RubroDto[]>();
 
   guardado = output<void>();
   cerrar = output<void>();
@@ -41,12 +44,32 @@ export class ComercioFormComponent implements OnInit {
   private servicio = inject(ComercioService);
   private notificacion = inject(NotificacionService);
 
+  catalogos = inject(CatalogoService);
+  auth = inject(AuthService);
+
   guardando = signal(false);
   errorGeneral = signal<string | null>(null);
   detalle = signal<ComercioDetalleDto | null>(null);
+  administrandoRubros = signal(false);
 
   esEdicion = computed(() => this.detalle() !== null);
   titulo = computed(() => (this.esEdicion() ? 'Editar comercio' : 'Nuevo comercio'));
+
+  /**
+   * Los rubros del combo son solo los activos. Si el comercio que se está
+   * editando tiene uno dado de baja, se agrega igual: sin esto el select
+   * quedaría en blanco y parecería que el comercio no tiene rubro.
+   */
+  rubrosDisponibles = computed<RubroDto[]>(() => {
+    const activos = this.catalogos.rubros();
+    const comercio = this.detalle();
+
+    if (!comercio || activos.some(r => r.id === comercio.rubroId)) {
+      return activos;
+    }
+
+    return [{ id: comercio.rubroId, nombre: `${comercio.rubro} (inactivo)` }, ...activos];
+  });
 
   formulario = this.fb.nonNullable.group({
     nombreComercial: ['', [Validators.required, Validators.maxLength(150)]],

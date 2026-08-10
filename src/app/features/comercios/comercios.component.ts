@@ -10,7 +10,6 @@ import { AuthService } from '../../core/auth/auth.service';
 import { ComercioFormComponent } from '../../shared/components/comercio-form/comercio-form.component';
 import { EstadoBadgeComponent } from '../../shared/components/estado-badge/estado-badge.component';
 import { IconComponent } from '../../shared/components/icon/icon.component';
-import { EstadoCatalogoDto, RubroDto } from '../../shared/models/catalogo';
 import {
   ComercioFiltro,
   ComercioListItemDto,
@@ -48,19 +47,16 @@ type ColumnaOrden = OrdenComercio | 'fecha';
 export class ComerciosComponent implements OnInit {
 
   private servicio = inject(ComercioService);
-  private catalogos = inject(CatalogoService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
 
   auth = inject(AuthService);
+  catalogos = inject(CatalogoService);
 
   cargando = signal(true);
   error = signal<string | null>(null);
   resultado = signal<PagedResult<ComercioListItemDto> | null>(null);
-
-  estados = signal<EstadoCatalogoDto[]>([]);
-  rubros = signal<RubroDto[]>([]);
 
   filtro = signal<ComercioFiltro>({});
 
@@ -103,13 +99,8 @@ export class ComerciosComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.catalogos.estados$
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({ next: estados => this.estados.set(estados), error: () => {} });
-
-    this.catalogos.rubros$
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({ next: rubros => this.rubros.set(rubros), error: () => {} });
+    this.catalogos.cargarEstados();
+    this.catalogos.cargarRubros();
 
     this.route.queryParamMap
       .pipe(takeUntilDestroyed(this.destroyRef))
