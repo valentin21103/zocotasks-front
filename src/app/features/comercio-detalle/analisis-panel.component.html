@@ -1,0 +1,96 @@
+<div class="panel">
+
+  @if (analizando()) {
+    <!-- Estado de carga: el análisis tarda unos segundos y el usuario tiene
+         que ver que algo está pasando, no un botón que parece colgado. -->
+    <div class="centrado">
+      <span class="girando"></span>
+      <p class="titulo-estado">Analizando oportunidad…</p>
+      <p class="ayuda">Estamos leyendo los datos del comercio y sus interacciones. Suele tardar unos segundos.</p>
+    </div>
+  } @else if (error(); as mensaje) {
+    <div class="centrado">
+      <p class="titulo-estado">No se pudo analizar</p>
+      <p class="ayuda">{{ mensaje }}</p>
+      <button type="button" class="boton" (click)="analizar()">Reintentar</button>
+    </div>
+  } @else if (analisis(); as resultado) {
+
+    @if (resultado.esDegradado) {
+      <!-- El backend devolvió 200 pero el proveedor de IA falló. No se
+           presenta como un análisis válido: si el modelo no respondió, el
+           sistema lo dice en vez de inventar un nivel de interés. -->
+      <div class="degradado">
+        <strong>No se pudo generar el análisis</strong>
+        <span>El servicio de IA no respondió. El resto de la aplicación funciona normalmente; volvé a intentar en un momento.</span>
+      </div>
+    }
+
+    <header class="cabecera">
+      <div>
+        <span class="etiqueta">Nivel estimado de interés</span>
+        <span [class]="claseNivel()">{{ resultado.nivelInteres }}</span>
+      </div>
+
+      <button type="button" class="boton boton-secundario" (click)="analizar()">
+        <app-icon nombre="chispa" [tamano]="16" />
+        Volver a analizar
+      </button>
+    </header>
+
+    @if (!resultado.esDegradado) {
+      <section class="bloque">
+        <h3>Resumen del comercio</h3>
+        <p>{{ resultado.resumen }}</p>
+      </section>
+
+      <section class="bloque destacado">
+        <h3>Próximo paso recomendado</h3>
+        <p>{{ resultado.proximoPaso }}</p>
+      </section>
+
+      <section class="bloque">
+        <h3>Preguntas para hacerle al comercio</h3>
+        <ol class="preguntas">
+          @for (pregunta of resultado.preguntasSugeridas; track pregunta) {
+            <li>{{ pregunta }}</li>
+          }
+        </ol>
+      </section>
+
+      <section class="bloque">
+        <h3>Datos que faltan</h3>
+        @if (resultado.datosFaltantes.length) {
+          <ul class="faltantes">
+            @for (dato of resultado.datosFaltantes; track dato) {
+              <li>{{ dato }}</li>
+            }
+          </ul>
+        } @else {
+          <p class="ayuda">No falta información relevante para avanzar.</p>
+        }
+      </section>
+
+      <footer class="firma">
+        Generado con {{ resultado.modeloUtilizado }} ·
+        {{ resultado.fechaGeneracion | date:'dd/MM/yyyy HH:mm' }}
+        · El análisis no se guarda: cada ejecución refleja los datos del momento.
+      </footer>
+    }
+
+  } @else {
+    <div class="centrado">
+      <span class="icono-grande"><app-icon nombre="chispa" [tamano]="26" /></span>
+      <p class="titulo-estado">Analizar esta oportunidad</p>
+      <p class="ayuda">
+        A partir de los datos del comercio y de sus interacciones se genera un resumen,
+        el nivel de interés estimado, el próximo paso recomendado, tres preguntas para
+        hacerle y qué información falta.
+      </p>
+      <button type="button" class="boton" (click)="analizar()">
+        <app-icon nombre="chispa" [tamano]="16" />
+        Analizar oportunidad
+      </button>
+    </div>
+  }
+</div>

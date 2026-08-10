@@ -16,6 +16,7 @@ import { NotificacionService } from '../../shared/services/notificacion.service'
 import { formatearCuit } from '../../shared/util/cuit.util';
 import { codigoDeError, mensajeDeError } from '../../shared/util/problem-details.util';
 import { ComercioService } from '../comercios/comercio.service';
+import { AnalisisPanelComponent } from './analisis-panel.component';
 import { InteraccionService } from './interaccion.service';
 
 /**
@@ -35,7 +36,8 @@ import { InteraccionService } from './interaccion.service';
     IconComponent,
     EstadoBadgeComponent,
     ComercioFormComponent,
-    InteraccionFormComponent
+    InteraccionFormComponent,
+    AnalisisPanelComponent
   ],
   templateUrl: './comercio-detalle.component.html',
   styleUrl: './comercio-detalle.component.css'
@@ -53,6 +55,9 @@ export class ComercioDetalleComponent {
   comercio = signal<ComercioDetalleDto | null>(null);
   cargando = signal(true);
   error = signal<string | null>(null);
+
+  /** Qué solapa se está mirando: los datos cargados o el análisis de la IA. */
+  vista = signal<'detalle' | 'analisis'>('detalle');
 
   editando = signal(false);
   registrandoInteraccion = signal(false);

@@ -22,7 +22,7 @@ export class AnalisisService {
 
   Analizar(comercioId: number): Observable<AnalisisOportunidadDto> {
     return this.http.post<AnalisisOportunidadDto>(
-      `${environment.apiUrl}/api/comercios/${comercioId}/analisis`,
+      `${environment.apiUrl}/api/comercios/${comercioId}/analizar`,
       {}
     );
   }

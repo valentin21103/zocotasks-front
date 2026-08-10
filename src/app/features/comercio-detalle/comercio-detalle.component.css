@@ -27,13 +27,8 @@
 
 .volver:hover { text-decoration: underline; }
 
-.barra h1 {
-  flex: 1;
-  font-size: 16px;
-  text-align: center;
-}
-
 .acciones {
+  margin-left: auto;
   display: flex;
   gap: var(--espacio-2);
 }
@@ -61,7 +56,43 @@
   padding: var(--espacio-5) var(--espacio-5) 0;
 }
 
-.titulo h2 { font-size: 22px; }
+.titulo h1 { font-size: 22px; }
+
+/* ── Solapas ───────────────────────────────────────────────── */
+
+.solapas {
+  display: flex;
+  gap: var(--espacio-1);
+  margin: var(--espacio-5) var(--espacio-5) 0;
+  padding: 4px;
+  border-radius: 999px;
+  background: var(--color-fondo);
+}
+
+.solapas button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex: 1;
+  padding: 9px 16px;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  font: inherit;
+  font-weight: 500;
+  color: var(--color-texto-suave);
+  cursor: pointer;
+  transition: background .15s, color .15s;
+}
+
+.solapas button:hover:not(.activa) { color: var(--color-texto); }
+
+.solapas button.activa {
+  background: var(--color-superficie);
+  color: var(--color-primario);
+  box-shadow: var(--sombra);
+}
 
 .datos {
   display: grid;
