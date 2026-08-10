@@ -2,8 +2,6 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { environment } from '../../../../environments/environment';
-import { Rol } from '../../../shared/models/usuario';
 import { mensajeDeError } from '../../../shared/util/problem-details.util';
 import { AuthService } from '../auth.service';
 
@@ -21,9 +19,6 @@ export class LoginComponent {
 
   enviando = signal(false);
   error = signal<string | null>(null);
-
-  /** El atajo de desarrollo no se compila en el build de producción. */
-  esDesarrollo = !environment.produccion;
 
   formulario = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
@@ -43,22 +38,24 @@ export class LoginComponent {
       next: () => this.router.navigate(['/comercios']),
       error: (error: HttpErrorResponse) => {
         this.enviando.set(false);
-
-        // El 401 acá no es sesión vencida: son credenciales que no coinciden.
-        // El mensaje es deliberadamente genérico, para no confirmar si el email
-        // existe en el sistema.
-        this.error.set(
-          error.status === 401
-            ? 'Email o contraseña incorrectos.'
-            : mensajeDeError(error)
-        );
+        this.error.set(this.mensajeParaElUsuario(error));
       }
     });
   }
 
-  /** Entra sin backend, para poder trabajar en las pantallas mientras el JWT no existe. */
-  entrarComoDev(rol: Rol): void {
-    this.auth.entrarComoDev(rol);
-    this.router.navigate(['/comercios']);
+  private mensajeParaElUsuario(error: HttpErrorResponse): string {
+    // El 401 acá no es sesión vencida: son credenciales que no coinciden. El
+    // cuerpo no es ProblemDetails (`{ mensaje }`, no `{ detail }`), así que el
+    // texto se arma acá en vez de leerlo de la respuesta.
+    if (error.status === 401) {
+      return 'Email o contraseña incorrectos.';
+    }
+
+    // El login tiene rate limiting: pocos intentos por minuto por IP.
+    if (error.status === 429) {
+      return 'Demasiados intentos. Esperá un minuto y volvé a probar.';
+    }
+
+    return mensajeDeError(error);
   }
 }

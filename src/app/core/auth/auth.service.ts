@@ -76,61 +76,20 @@ export class AuthService {
 
     const claims = this.decodificarJwt(respuesta.token);
 
+    // El rol sale del claim del JWT, que es lo que el backend usa de verdad
+    // para autorizar. `respuesta.roles[0]` es respaldo por si algún día el
+    // token dejara de traer el claim.
     const sesion: Sesion = {
       id: Number(claims['nameid'] ?? claims['sub'] ?? claims[CLAIM_ID]),
-      email: String(claims['email'] ?? claims[CLAIM_EMAIL] ?? respuesta.usuario.email),
+      email: String(claims['email'] ?? claims[CLAIM_EMAIL] ?? respuesta.email),
       nombreCompleto: String(
-        claims['unique_name'] ?? claims[CLAIM_NOMBRE] ?? respuesta.usuario.nombreCompleto
+        claims['unique_name'] ?? claims[CLAIM_NOMBRE] ?? respuesta.nombreCompleto
       ),
-      rol: (claims['role'] ?? claims[CLAIM_ROL] ?? respuesta.usuario.rol) as Rol
+      rol: (claims['role'] ?? claims[CLAIM_ROL] ?? respuesta.roles[0]) as Rol
     };
 
     localStorage.setItem(CLAVE_SESION, JSON.stringify(sesion));
     this.sesion.set(sesion);
-  }
-
-  /**
-   * Atajo de desarrollo: arma una sesión con un token fabricado en el cliente,
-   * para poder trabajar en las pantallas mientras el backend todavía no expone
-   * `/api/auth/login`.
-   *
-   * No es un agujero de seguridad: **cualquiera puede hacer esto a mano desde la
-   * consola del navegador**, precisamente porque el frontend no verifica firmas
-   * ni decide permisos. Lo único que habilita es la navegación; en cuanto el
-   * backend tenga [Authorize], este token no va a pasar ningún endpoint.
-   *
-   * Queda inhabilitado en el build de producción.
-   */
-  entrarComoDev(rol: Rol): void {
-    if (environment.produccion) return;
-
-    const payload = {
-      nameid: rol === 'Admin' ? 1 : 2,
-      unique_name: rol === 'Admin' ? 'Admin de prueba' : 'Moderador de prueba',
-      email: rol === 'Admin' ? 'admin@zoco.test' : 'moderador@zoco.test',
-      role: rol,
-      exp: Math.floor(Date.now() / 1000) + 60 * 60 * 8
-    };
-
-    const base64url = (objeto: object) =>
-      btoa(JSON.stringify(objeto)).replace(/\+/g, '-').replace(/\//g, '_');
-
-    const token = [
-      base64url({ alg: 'HS256', typ: 'JWT' }),
-      base64url(payload),
-      'firma-de-desarrollo'
-    ].join('.');
-
-    this.establecerSesion({
-      token,
-      expiraEn: new Date(payload.exp * 1000).toISOString(),
-      usuario: {
-        id: payload.nameid,
-        email: payload.email,
-        nombreCompleto: payload.unique_name,
-        rol
-      }
-    });
   }
 
   private cargarSesion(): Sesion | null {

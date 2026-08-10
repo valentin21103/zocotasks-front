@@ -290,9 +290,9 @@ consulta por tecla.
 
 **Decisión.** `AuthService` guarda el JWT en `localStorage` y expone la sesión
 como `signal<Sesion | null>`, con los datos leídos de los claims del token. Dos
-roles: **Admin** y **Moderador**.
+roles: **Admin** y **Vendedor**.
 
-| | Admin | Moderador |
+| | Admin | Vendedor |
 |---|---|---|
 | Ver, buscar, filtrar | ✅ | ✅ |
 | Crear y editar comercios | ✅ | ✅ |
